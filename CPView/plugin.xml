@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Consume-Produce"
+            id="CPView">
+      </category>
+      <view
+            name="Diagram View"
+            icon="icons/sample.gif"
+            category="CPView"
+            class="cpview.views.DiagramView"
+            id="cpview.views.DiagramView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="top"
+               id="cpview.views.DiagramView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="cpview.preferences.PreferencePage"
+            id="cpview.preferences.PreferencePage"
+            name="CPView Preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="cpview.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>
