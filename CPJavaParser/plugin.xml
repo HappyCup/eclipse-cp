@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="4.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+         <menu
+               label="Eclipse-CP">
+            <command
+                  commandId="CPJavaParser.starter"
+                  label="Add to Diagram"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="true">
+                  <with
+                        variable="activeMenuSelection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <or>
+                           <adapt
+                                 type="org.eclipse.jdt.core.IJavaProject">
+                           </adapt>
+                           <adapt
+                                 type="org.eclipse.jdt.core.IPackageFragment">
+                           </adapt>
+                           <adapt
+                                 type="org.eclipse.jdt.core.ICompilationUnit">
+                           </adapt>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="cpjavaparser.commands.Starter"
+            id="CPJavaParser.starter"
+            name="name">
+      </command>
+   </extension>
+
+</plugin>
