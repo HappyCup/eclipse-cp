@@ -1,6 +1,7 @@
 package cpview.views;
 
 
+import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
@@ -20,6 +21,8 @@ public class DiagramView extends ViewPart {
 	
     /** The ID of the views context menu */
     public static final String CONTEXT_ID = ID + ".context";
+    
+    private DiagramTool _diagramTool;
 
 	/**
 	 * The constructor.
@@ -33,8 +36,13 @@ public class DiagramView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent){
-		new DiagramTool(parent);
+		_diagramTool = new DiagramTool(parent);
 	}
+	
+	public DiagramTool getDiagramTool(){
+		return _diagramTool;
+	}
+	
 
 
 	/**

@@ -82,6 +82,7 @@ public class ClassTool {
 
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		initColors(store);
+		initFont(store);
 		createPreferenceListener(store);
 	}
 
@@ -126,12 +127,16 @@ public class ClassTool {
 		rgb = PreferenceConverter.getColor(store,
 				PreferenceConstants.PRODUCE_COLOR);
 		_produceColor = ColorManager.getColorFromRGB(rgb);
-		_gui.setConsumeButtonColor(_consumeColor);
-		_gui.setProduceButtonColor(_produceColor);
+		_gui.setColor(_consumeColor);
 		if (_class.getMode() == CPMode.CONSUME)
-			_gui.setColor(_consumeColor);
+			_gui.setCornerColor(_consumeColor);
 		else
-			_gui.setColor(_produceColor);
+			_gui.setCornerColor(_produceColor);
+	}
+	
+	private void initFont(IPreferenceStore store){
+		int fontSize = store.getInt(PreferenceConstants.FONT_SIZE);
+		_gui.setFontSize(fontSize);
 	}
 
 	/**
@@ -155,6 +160,25 @@ public class ClassTool {
 				notifyObservers();
 			}
 		});
+		
+		_gui.addCornerMouseListener(new MouseListener.Stub(){
+			@Override
+			public void mousePressed(MouseEvent me) {
+				if (_class.getMode() == CPMode.CONSUME){
+					_class.setMode(CPMode.PRODUCE);
+					_gui.setCornerColor(_produceColor);
+					_gui.setCornerOpen(true);
+				}else{
+					_class.setMode(CPMode.CONSUME);
+					_gui.setCornerColor(_consumeColor);
+					_gui.setCornerOpen(false);
+
+				}
+				notifyObservers();
+				super.mousePressed(me);
+			}
+		});
+
 
 	}
 
@@ -256,8 +280,13 @@ public class ClassTool {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				initColors(store);
+				initFont(store);
 			}
 		});
+	}
+
+	public void removeListeners() {
+		_listeners.clear();		
 	}
 
 }

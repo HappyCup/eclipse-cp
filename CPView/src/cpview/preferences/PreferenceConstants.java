@@ -16,5 +16,9 @@ public class PreferenceConstants {
 	public static final String CONSUME_COLOR = "consumecolorPreference";
 
 	public static final String PRODUCE_COLOR = "producecolorPreference";
+
+	public static final String BACKGROUND_COLOR = "backgroundcolorPreference";
+	
+	public static final String FONT_SIZE = "fontSize";
 	
 }

@@ -4,24 +4,27 @@ import org.eclipse.draw2d.ActionListener;
 import org.eclipse.draw2d.AncestorListener;
 import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.BorderLayout;
-import org.eclipse.draw2d.Button;
 import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.GridData;
-import org.eclipse.draw2d.GridLayout;
+import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LayoutManager;
+import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.Panel;
 import org.eclipse.draw2d.SchemeBorder;
 import org.eclipse.draw2d.SchemeBorder.Scheme;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
+
+import cpview.util.ImageManager;
 
 /**
  * GUI-Class for the ClassTool
@@ -41,22 +44,24 @@ class ClassGui {
 	 */
 	private Label _namelabel;
 
-	/**
-	 * Button to activate Consumer-View
-	 */
-	private Button _consumeButton;
+	// /**
+	// * Button to activate Consumer-View
+	// */
+	// private Button _consumeButton;
+	//
+	// /**
+	// * Button to activate Producer-View
+	// */
+	// private Button _produceButton;
 
-	/**
-	 * Button to activate Producer-View
-	 */
-	private Button _produceButton;
-	
 	/**
 	 * The pin-symbol indicating this Class is pinned
 	 */
 	private Ellipse _pinSymbol;
 
-	public static int PRODUCE_COLOR = SWT.COLOR_RED;
+	private ScalableImagePolygonShape _corner;
+
+	private Rectangle lastLocation;
 
 	/**
 	 * Creates new ClassGUI and initializes all Components.
@@ -67,38 +72,53 @@ class ClassGui {
 		_figure.setLayoutManager(layout);
 
 		Font defaultFont = Display.getCurrent().getSystemFont();
-
+		
 		_namelabel = new Label();
 		_namelabel.setFont(defaultFont);
 
-		_consumeButton = new Button("C");
-		_consumeButton.setFont(defaultFont);
+		// _consumeButton = new Button("C");
+		// _consumeButton.setFont(defaultFont);
+		//
+		// _produceButton = new Button("P");
+		// _produceButton.setFont(defaultFont);
 
-		_produceButton = new Button("P");
-		_produceButton.setFont(defaultFont);
-		
+		_corner = new ScalableImagePolygonShape(
+				ImageManager.getIconImage("binary.png"));
+		_corner.addPoint(new Point(1, 1));
+		_corner.addPoint(new Point(0, 1));
+		_corner.addPoint(new Point(1, 0));
+		_corner.setLineWidth(0);
+		_corner.setSize(32, 32); // TODO Magic Numbers
+
+		Figure bottomFigure = new Figure();
+		FlowLayout bottomLayout = new FlowLayout();
+		bottomFigure.setLayoutManager(bottomLayout);
+		bottomLayout.setMajorAlignment(FlowLayout.ALIGN_BOTTOMRIGHT);
+		bottomFigure.add(_corner);
+
 		_pinSymbol = new Ellipse();
 		_pinSymbol.setSize(16, 16);
-		_pinSymbol.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
+		_pinSymbol.setBackgroundColor(Display.getCurrent().getSystemColor(
+				SWT.COLOR_YELLOW));
 
-		Figure buttonFigure = new Figure();
-		buttonFigure.setLayoutManager(new GridLayout(2, true));
-		buttonFigure.add(_consumeButton, new GridData(SWT.FILL, SWT.FILL, true,
-				true));
-		buttonFigure.add(_produceButton, new GridData(SWT.FILL, SWT.FILL, true,
-				true));
+		// Figure buttonFigure = new Figure();
+		// buttonFigure.setLayoutManager(new GridLayout(2, true));
+		// buttonFigure.add(_consumeButton, new GridData(SWT.FILL, SWT.FILL,
+		// true,
+		// true));
+		// buttonFigure.add(_produceButton, new GridData(SWT.FILL, SWT.FILL,
+		// true,
+		// true));
 
 		_figure.add(_namelabel, BorderLayout.TOP);
-		_figure.add(buttonFigure, BorderLayout.BOTTOM);
+		// _figure.add(buttonFigure, BorderLayout.BOTTOM);
+		_figure.add(bottomFigure, BorderLayout.BOTTOM);
 		_figure.add(_pinSymbol, BorderLayout.LEFT);
 
 		_figure.setMinimumSize(new Dimension(100, 50));
 		_figure.setBorder(createCustomBorder());
 
-		
 	}
-
-
 
 	/**
 	 * Moves the Figure on its parent. Does not affect size or layout of the
@@ -139,11 +159,11 @@ class ClassGui {
 	public void addCombinedMouseListener(final CombinedMouseListener listener) {
 		_figure.addMouseListener(listener);
 		_figure.addMouseMotionListener(listener);
-		_figure.addAncestorListener(new AncestorListener.Stub() {		
+		_figure.addAncestorListener(new AncestorListener.Stub() {
 			@Override
 			public void ancestorAdded(IFigure ancestor) {
 				ancestor.addMouseMotionListener(listener);
-				
+
 			}
 		});
 	}
@@ -155,7 +175,7 @@ class ClassGui {
 	 *            the Listener to be registered
 	 */
 	public void addConsumeButtonListener(ActionListener listener) {
-		_consumeButton.addActionListener(listener);
+		// _consumeButton.addActionListener(listener);
 	}
 
 	/**
@@ -165,7 +185,7 @@ class ClassGui {
 	 *            the Listener to be registered
 	 */
 	public void addProduceButtonListener(ActionListener listener) {
-		_produceButton.addActionListener(listener);
+		// _produceButton.addActionListener(listener);
 	}
 
 	/**
@@ -175,7 +195,17 @@ class ClassGui {
 	 *            true for visible, false for invisible
 	 */
 	public void setVisible(boolean flag) {
+		if (_figure.isVisible()) {
+			lastLocation = _figure.getBounds().getCopy();
+			if (flag == false)
+				_figure.setBounds(new Rectangle());
+		}
 		_figure.setVisible(flag);
+		if (_figure.isVisible() && lastLocation != null) {
+			_figure.setBounds(lastLocation);
+			
+			pack();
+		}
 	}
 
 	/**
@@ -186,6 +216,10 @@ class ClassGui {
 	 */
 	public void setColor(Color color) {
 		_figure.setBackgroundColor(color);
+	}
+
+	public void setCornerColor(Color color) {
+		_corner.setBackgroundColor(color);
 	}
 
 	/**
@@ -202,7 +236,7 @@ class ClassGui {
 	 *            The new Color
 	 */
 	public void setConsumeButtonColor(Color color) {
-		_consumeButton.setBackgroundColor(color);
+		// _consumeButton.setBackgroundColor(color);
 	}
 
 	/**
@@ -222,50 +256,72 @@ class ClassGui {
 	 *            The new Color
 	 */
 	public void setProduceButtonColor(Color color) {
-		_produceButton.setBackgroundColor(color);	
+		// _produceButton.setBackgroundColor(color);
 	}
-	
+
 	private Border createCustomBorder() {
 		Color c1 = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY);
 		Color c2 = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
-		Color[] shadows = {c2,c1};
-		Color[] highlights = {c1};
+		Color[] shadows = { c2, c1 };
+		Color[] highlights = { c1 };
 		Scheme scheme = new Scheme(highlights, shadows);
 		return new SchemeBorder(scheme);
 	}
 
-
 	/**
 	 * Adds a Mouse Listener to the GUI
-	 * @param mouseListener the new MouseListener
+	 * 
+	 * @param mouseListener
+	 *            the new MouseListener
 	 */
 	public void addMouseListener(MouseListener mouseListener) {
 		_figure.addMouseListener(mouseListener);
-		
-	}
 
+	}
 
 	/**
 	 * Sets the visibility of the pin-symbol
-	 * @param flag true for visible; false for invisible
+	 * 
+	 * @param flag
+	 *            true for visible; false for invisible
 	 */
 	public void setPinVisible(boolean flag) {
 		_pinSymbol.setVisible(flag);
 	}
 
-
-
 	/**
 	 * Brings the Figure to the front, so it is drawn over other figures.
 	 */
 	public void bringToFront() {
-		//TODO: Find a better implementation for bringToFront
+		// TODO: Find a better implementation for bringToFront
 		IFigure parent = _figure.getParent();
 		parent.remove(_figure);
 		parent.add(_figure);
 	}
 
+	public void addCornerMouseListener(MouseListener listener) {
+		_corner.addMouseListener(listener);
 
+	}
 
+	public void setCornerOpen(boolean flag) {
+		if (flag == true) {
+			_corner.setBorder(new LineBorder());
+		} else {
+			_corner.setBorder(null);
+		}
+		_corner.setImageVisible(flag);
+
+	}
+	
+	/**
+	 * Sets Fontsize of the Namelabel to the given size.
+	 * @param fontSize The new Fontsize
+	 */
+	public void setFontSize(int fontSize){
+		FontData[] fD = _namelabel.getFont().getFontData();
+		fD[0].setHeight(fontSize);
+		_namelabel.setFont( new Font(Display.getCurrent(),fD[0]));
+	}
 
 }

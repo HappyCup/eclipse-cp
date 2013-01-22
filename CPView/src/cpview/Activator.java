@@ -4,6 +4,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import cpview.services.DiagramDataService;
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -15,10 +17,13 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
+	private DiagramDataService _dataService;
+	
 	/**
 	 * The constructor
 	 */
 	public Activator() {
+		_dataService = new DiagramDataService();
 	}
 
 	/*
@@ -59,4 +64,7 @@ public class Activator extends AbstractUIPlugin {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 	
+	public DiagramDataService getDiagram(){
+		return _dataService;
+	}
 }

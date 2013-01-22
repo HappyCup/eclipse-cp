@@ -1,8 +1,11 @@
 package cpview.preferences;
 
-import org.eclipse.jface.preference.*;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+
 import cpview.Activator;
 
 /**
@@ -40,6 +43,10 @@ public class PreferencePage
 	public void createFieldEditors() {
 		addField(new ColorFieldEditor(PreferenceConstants.CONSUME_COLOR, "Consume-Color", getFieldEditorParent()));
 		addField(new ColorFieldEditor(PreferenceConstants.PRODUCE_COLOR, "Produce-Color", getFieldEditorParent()));
+		addField(new ColorFieldEditor(PreferenceConstants.BACKGROUND_COLOR, "Background-Color", getFieldEditorParent()));
+		
+		addField(new IntegerFieldEditor(PreferenceConstants.FONT_SIZE, "Font-Size", getFieldEditorParent()));
+		
 
 //		addField(new DirectoryFieldEditor(PreferenceConstants.P_PATH, 
 //				"&Directory preference:", getFieldEditorParent()));

@@ -48,5 +48,34 @@
             class="cpview.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="cpview.perspective.PerspectiveFactory"
+            id="CPView.perspective"
+            name="CPView">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:cpview.views.DiagramView">
+         <command
+               commandId="CPView.command2"
+               icon="icons/sample.gif"
+               label="Clear"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="cpview.ClearHandler"
+            id="CPView.command2"
+            name="name">
+      </command>
+   </extension>
 
 </plugin>

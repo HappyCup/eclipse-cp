@@ -5,7 +5,7 @@ import cpview.values.CPMode;
 
 public class Type {
 	
-	private String _classname;
+	private final String _classname;
 	private CPMode _mode;
 	private boolean _visible;
 	private boolean _pinned;
@@ -54,6 +54,11 @@ public class Type {
 			return otherClass._classname.equals(this._classname);
 		}
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return _classname.hashCode();
 	}
 	
 

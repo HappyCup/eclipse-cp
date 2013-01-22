@@ -1,6 +1,7 @@
 package cpview.tools;
 
 import org.eclipse.draw2d.ChopboxAnchor;
+import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
@@ -62,7 +63,12 @@ public class ConnectionTool {
 	 * Initialises Connection with attributes defined in Relationship
 	 */
 	private void initConnection(){
-		_connection = new PolylineConnection();
+		_connection = new PolylineConnection(){
+			@Override
+			public boolean containsPoint(int x, int y) { //Connections are not clickable in this diagram
+				return false;
+			}
+		};
 		_connection.setSourceAnchor(_startAnchor);
 		_connection.setTargetAnchor(_endAnchor);
 		_connection.setVisible(_relationship.isVisible());
@@ -90,7 +96,7 @@ public class ConnectionTool {
 	/**
 	 * @return The GUI-Figure
 	 */
-	public IFigure getFigure() {
+	public Connection getFigure() {
 		return _connection;
 	}
 
